@@ -95,7 +95,10 @@ def createTestData(data_path='./test_data/data_list.txt', label_path="./test_dat
 
     with open(kingdom_path, 'r') as kingdom_file:
         for line in kingdom_file:
-            kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
+            if line.strip('\n\t') not in kingdom_dic.keys():
+                kingdom_list.append([-1 / (len(kingdom_dic.keys()) + 1)] * 4)  # Seqs without group information
+            else:
+                kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
 
     count = 0
     with open(aa_path, 'r') as aa_file:

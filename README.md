@@ -1,7 +1,7 @@
 # USPNet
 
 
-This is the  simplified inference code for paper 'USPNet: unbiased organism-agnostic signal peptide1
+This is the  simplified inference code for paper 'USPNet: unbiased organism-agnostic signal peptide
 predictor with deep protein language model'
 
 

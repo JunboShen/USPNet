@@ -10,6 +10,7 @@ position_specific_classes_enc = preprocessing.LabelEncoder()
 position_specific_classes_enc.fit(
     np.array(PositionSpecificLetter.values()).reshape((len(PositionSpecificLetter.values()), 1))
 )
+
 def relabel(y, label_test, keep, mode):
     y_ = y.tolist()
     label_ = label_test
@@ -43,7 +44,8 @@ def relabel(y, label_test, keep, mode):
     return new_y, new_label
 
 def trans_data(str1, padding_length):
-    # 对氨基酸进行编码转换
+    # Translates amino acids into numbers
+
     a = []
     trans_dic = {'A':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7,'I':8,'K':9,'L':10,'M':11,'N':12,'P':13,'Q':14,'R':15,'S':16,'T':17,'V':18,'W':19,'Y':20,'X':0}
     for i in range(len(str1)):
@@ -58,7 +60,7 @@ def trans_data(str1, padding_length):
     return a
 
 def trans_label(str1):
-    # 对标签进行编码转换
+    # Translates labels into numbers
     if((str1) in dic.keys()):
         a = dic.get(str1)
     else:
@@ -71,13 +73,13 @@ def createTestData(data_path='./test_data/data_list.txt', label_path="./test_dat
                     kingdom_path='./test_data/kingdom_list.txt', aa_path = "./test_data/aa_list.txt",
                    maxlen=70, test_path="./test_data/embedding/test_feature.npy"
                    ):
-    # 初始化
+    # Initialize
     data_list = []
     label_list = []
     kingdom_list=[]
     aa_list=[]
     raw_data=[]
-    # 加载数据
+    # Load data
     with open(data_path, 'r') as data_file:
         for line in data_file:
             data_list.append(np.array(trans_data(line.strip('\n'), maxlen)))
@@ -95,10 +97,7 @@ def createTestData(data_path='./test_data/data_list.txt', label_path="./test_dat
 
     with open(kingdom_path, 'r') as kingdom_file:
         for line in kingdom_file:
-            if line.strip('\n\t') not in kingdom_dic.keys():
-                kingdom_list.append([-1 / (len(kingdom_dic.keys()) + 1)] * 4)  # Seqs without group information
-            else:
-                kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
+            kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
 
     count = 0
     with open(aa_path, 'r') as aa_file:
@@ -120,6 +119,7 @@ def createTestData(data_path='./test_data/data_list.txt', label_path="./test_dat
     labels = labels.reshape(labels.shape[0], 1)
     labels = np.concatenate((labels, aas), axis=1)
     return X, labels
+
 def evaluate(X, label, mode):
     test_dataset = SPDataset(X, label)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=256)
@@ -154,7 +154,7 @@ def evaluate(X, label, mode):
 
     return pred(output).cpu(), output_aa, labels_test, labels_test_aa
 
-#cleavage site prediction test
+#Cleavage site prediction test
 def aaTest(output_aa_origin, labels_test_aa_origin, labels_test_origin, testType):
     if(testType == "SP"):
         tag=1
@@ -302,5 +302,10 @@ if __name__ == '__main__':
         y_pred_, labels_test_ = relabel(y_pred.clone(), labels_test, 4, "all")
         result_ad = metric_advanced(m, y_pred_, labels_test_)
 
-        print()
+
+        #aaTest(output_aa, labels_test_aa, labels_test, "SP")
+        #if (key != 'EUKARYA'):
+        #    aaTest(output_aa, labels_test_aa, labels_test, "LIPO")
+        #    aaTest(output_aa, labels_test_aa, labels_test, "TAT")
+        #    aaTest(output_aa, labels_test_aa, labels_test, "TATLIPO")
 

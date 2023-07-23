@@ -8,7 +8,7 @@ dic2 = {0: 'NO_SP', 1: 'SP', 2: 'LIPO', 3: 'TAT', 4: 'TATLIPO', 5: 'PILIN'}
 kingdom_dic = {'EUKARYA':0, 'ARCHAEA':1, 'POSITIVE':2, 'NEGATIVE': 3}
 
 def trans_data(str1, padding_length):
-    # 对氨基酸进行编码转换
+    # Translates amino acids into numbers
     a = []
     trans_dic = {'A':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7,'I':8,'K':9,'L':10,'M':11,'N':12,'P':13,'Q':14,'R':15,'S':16,'T':17,'V':18,'W':19,'Y':20,'X':0}
     for i in range(len(str1)):
@@ -23,7 +23,7 @@ def trans_data(str1, padding_length):
     return a
 
 def trans_label(str1):
-    # 对标签进行编码转换
+    # Translates labels into numbers
     if((str1) in dic.keys()):
         a = dic.get(str1)
     else:
@@ -36,11 +36,11 @@ def createTestData(data_path='./test_data/data_list.txt',
                     kingdom_path='./test_data/kingdom_list.txt',
                    maxlen=70, test_path="./embedding/test_feature.npy"
                    ):
-    # 初始化
+    # Initialize
     data_list = []
     kingdom_list=[]
     raw_data=[]
-    # 加载数据
+    # Load data
     with open(data_path, 'r') as data_file:
         for line in data_file:
             str = np.array(trans_data(line.strip('\n')[0:70], maxlen))
@@ -55,12 +55,7 @@ def createTestData(data_path='./test_data/data_list.txt',
 
     with open(kingdom_path, 'r') as kingdom_file:
         for line in kingdom_file:
-            if line.strip('\n\t') not in kingdom_dic.keys():
-                kingdom_list.append([-1/(len(kingdom_dic.keys())+1)]*4)#Seqs without group information
-            else:
-                kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
-
-    count = 0
+            kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
 
 
     data_file.close()
@@ -73,7 +68,7 @@ def createTestData(data_path='./test_data/data_list.txt',
     return X
 
 def trans_output(str1):
-    # 对标签进行编码转换
+    # Translates numbers into labels
     if((str1) in dic2.keys()):
         a = dic2.get(str1)
     else:

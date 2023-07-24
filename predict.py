@@ -1,7 +1,15 @@
 import os
 import torch as torch
 import numpy as np
+import argparse
 from utils_tools.utils import *
+
+# Set up argument parser
+parser = argparse.ArgumentParser(description='Predict')
+parser.add_argument('group_info', nargs='?', default='default', help='group information provided or not')
+
+# Parse arguments
+args = parser.parse_args()
 
 dic = {'NO_SP': 0, 'SP': 1, 'LIPO': 2, 'TAT': 3, 'TATLIPO' : 4, 'PILIN' : 5}
 dic2 = {0: 'NO_SP', 1: 'SP', 2: 'LIPO', 3: 'TAT', 4: 'TATLIPO', 5: 'PILIN'}
@@ -55,7 +63,10 @@ def createTestData(data_path='./test_data/data_list.txt',
 
     with open(kingdom_path, 'r') as kingdom_file:
         for line in kingdom_file:
-            kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
+            if args.group_info == 'no_group_info':
+                kingdom_list.append([0, 0, 0, 0])
+            else:
+                kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
 
 
     data_file.close()
@@ -81,6 +92,11 @@ if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     model = torch.load("USPNet_model.pth", map_location=device)
+
+    if args.group_info == 'no_group_info':
+        model = torch.load("USPNet_no_group_info.pth", map_location=device)
+    else:
+        model = torch.load("USPNet_model.pth", map_location=device)
 
     model_ = model
     if isinstance(model, torch.nn.DataParallel):

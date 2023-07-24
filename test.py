@@ -282,6 +282,7 @@ if __name__ == '__main__':
                         'NEGATIVE': "./test_data/embedding/feature_NEGATIVE.npy"}
     y_pred, output_aa, labels_test, labels_test_aa = evaluate(X_test, labels_test, mode)
 
+    #result_ad = metric_advanced("MCC", y_pred, labels_test)
 
     for key in X_test_cls.keys():
         m = "MCC"

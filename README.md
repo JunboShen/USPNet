@@ -1,8 +1,7 @@
 # USPNet
 
 
-This is the  simplified inference code for paper 'USPNet: unbiased organism-agnostic and highly sensitive signal1
-peptide predictor with deep protein language model'
+This is the  simplified inference code for paper 'USPNet: unbiased organism-agnostic and highly sensitive signal peptide predictor with deep protein language model'
 
 
 We provide a pretrained-predicting header, and pretrained protein embeddings.<br>

@@ -25,7 +25,7 @@ def normalize(list):
 
 class SPDataset(Dataset):
     """
-        完成数据的初始化，transform等工作
+        Complete data initialization, transformation, etc.
     """
 
     def __init__(self, X, Y ):

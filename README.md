@@ -26,7 +26,7 @@ conda env create -f ./environment.yml
 [Test set](https://drive.google.com/file/d/1O-Uwo2HOk5H2IiyPHCqWiBCNX6MbPf4U/view?usp=sharing).<br>
 
 ### Download trained predictive model
-[Prediction head](https://drive.google.com/file/d/1ZNDZ_ulmeZzol7u1_fMEODe7nvtWLFqh/view?usp=sharing).<br>
+[Prediction head](https://drive.google.com/file/d/1ZNDZ_ulmeZzol7u1_fMEODe7nvtWLFqh/view?usp=sharing), (https://drive.google.com/file/d/1YfFmGZNEhl4q86dljPeWub1WLLCH7VNx/view?usp=drive_link).<br>
 
 ### Download embeddings
 [MSA embedding for test set](https://drive.google.com/file/d/1FPPKO9OaAdB0K9heUqQuymmqMN4m_XI3/view?usp=sharing).<br>
@@ -43,5 +43,11 @@ python predict.py
 
 unzip test_data.zip
 python test.py
+```
+For data without organism group information, please run:
+```
+python predict.py no_group_info
+
+python test.py no_group_info
 ```
 

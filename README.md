@@ -1,11 +1,11 @@
 # USPNet
 
 
-This is the  simplified inference code for paper 'USPNet: unbiased organism-agnostic and highly sensitive signal peptide predictor with deep protein language model'
+This repository contains code for the paper 'USPNet: unbiased organism-agnostic and highly sensitive signal peptide predictor with deep protein language model'
 
 
-We provide the pretrained-predicting header, and pretrained protein embeddings.<br>
-Please download all files and run prediction on test set.
+We provide the trained predicting header of USPNet and MSA Transformer embeddings of the test set for direct usage.<br>
+You can also use USPNet and USPNet-fast to predict the signal peptide of any protein sequence.<br>
 
 
 
@@ -40,7 +40,7 @@ conda env create -f ./environment.yml
 ## Usage
 Put all the downloaded files into the same folder.<br>
 
-Then run:
+If you want to use USPNet on our test set, please run:
 ```
 python data_processing.py
 python predict.py
@@ -49,7 +49,7 @@ unzip test_data.zip
 python test.py
 ```
 
-To generate MSA embeddings on new dataset for prediction, please run:
+To generate MSA embeddings on your own protein sequences for prediction, please run:
 ```
 python data_processing.py [fasta_file] [msa_dir/]
 

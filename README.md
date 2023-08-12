@@ -63,7 +63,7 @@ python predict.py no_group_info
 python test.py no_group_info
 ```
 
-To use USPNet fast, please run:
+To use USPNet-fast, please run:
 ```
 python predict_fast.py
 

@@ -4,8 +4,9 @@
 This repository contains code for the paper 'USPNet: unbiased organism-agnostic and highly sensitive signal peptide predictor with deep protein language model'
 
 
-We provide the trained predicting header of USPNet and MSA Transformer embeddings of the test set for direct usage.<br>
-You can also use USPNet and USPNet-fast to predict the signal peptide of any protein sequence.<br>
+You can use either USPNet or USPNet-fast to predict the signal peptide of a protein sequence.<br>
+We also provide MSA Transformer embeddings of the test set for direct usage.<br>
+
 
 
 

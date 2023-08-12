@@ -4,18 +4,22 @@ import sys
 # -*- coding: utf-8 -*-
 
 import Bio.SeqIO as SeqIO
+from utils_tools.Msa_Create_Embedding import *
 
 
 filename_list=['test_set.fasta', 'target_list.txt', 'data_list.txt',
                'kingdom_list.txt', 'aa_list.txt']
+msa_dir = None
 
 target_list=[]
 data_list=[]
 kingdom_list=[]
 
 def usage():
-    print('Usage: python data_processing.py [fasta_file]')
-
+    print('Usage: python data_processing.py [fasta_file] or python data_processing.py [fasta_file] [msa_dir/]')
+    print('msa_dir: directory of msa files, if not provided, msa embedding will not be created')
+    print('MSA files in the directory should be names as 1.a3m, 2.a3m, 3.a3m, ..., in numerical order')
+    print('The order of msa files should be the same as sequences in fasta file')
 
 def main():
 
@@ -73,11 +77,21 @@ def main():
     outf3.close()
     outf4.close()
 
+    #create msa embedding
+    if msa_dir is not None:
+        createDatasetEmbedding(msa_dir, "test_feature.npy")
+
+
 try:
     #read file names if provided
 
     if len(sys.argv) == 2:
         filename_list[0] = sys.argv[1]
+    elif len(sys.argv) == 3:
+        msa_dir = sys.argv[2]
+    elif len(sys.argv) > 3:
+        usage()
+        sys.exit(1)
     main()
 
 

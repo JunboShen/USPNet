@@ -52,6 +52,20 @@ unzip test_data.zip
 python test.py
 ```
 
+Demo of USPNet on benchmark data without organism group information:
+```python
+python predict.py no_group_info
+
+python test.py no_group_info
+```
+
+Demo of USPNet-fast on benchmark data:
+```python
+python predict_fast.py
+
+python test_fast.py
+```
+
 To generate MSA embeddings on your own protein sequences and use USPNet to perform signal peptide prediction, please run:
 ```python
 # MSA embedding generation
@@ -61,16 +75,11 @@ python data_processing.py [fasta_file] [msa_dir/]
 python predict.py
 ```
 
-For data without organism group information, please run:
-```python
-python predict.py no_group_info
-
-python test.py no_group_info
-```
-
-To use USPNet-fast, please run:
+If you want to use USPNet-fast to perform signal peptide prediction on your own protein sequences, please run:
 ```python
 python predict_fast.py
 
-python test_fast.py
 ```
+
+
+

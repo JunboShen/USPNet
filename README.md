@@ -43,7 +43,7 @@ conda env create -f ./environment.yml
 Put all the downloaded files into the same folder.<br>
 
 If you want to use USPNet on our benchmark set, please run:
-```python
+```bash
 python data_processing.py
 python predict.py
 
@@ -53,21 +53,21 @@ python test.py
 ```
 
 Demo of USPNet on benchmark data without organism group information:
-```python
+```bash
 python predict.py no_group_info
 
 python test.py no_group_info
 ```
 
 Demo of USPNet-fast on benchmark data:
-```python
+```bash
 python predict_fast.py
 
 python test_fast.py
 ```
 
 To generate MSA embeddings on your own protein sequences and use USPNet to perform signal peptide prediction, please run:
-```python
+```bash
 # MSA embedding generation
 python data_processing.py [fasta_file] [msa_dir/]
 
@@ -76,7 +76,7 @@ python predict.py
 ```
 
 If you want to use USPNet-fast to perform signal peptide prediction on your own protein sequences, please run:
-```python
+```bash
 python predict_fast.py
 
 ```

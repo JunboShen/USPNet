@@ -71,12 +71,14 @@ To generate MSA embeddings on your own protein sequences and use USPNet to perfo
 # MSA embedding generation
 python data_processing.py [fasta_file] [msa_dir/]
 
-# Prediction
+# Prediction. use 'python predict.py no_group_info' if lack of organism group information.
 python predict.py
 ```
 
 If you want to use USPNet-fast to perform signal peptide prediction on your own protein sequences, please run:
 ```bash
+
+# Prediction. use 'python predict_fast.py no_group_info' if lack of organism group information.
 python predict_fast.py
 
 ```

@@ -92,4 +92,3 @@ if __name__ == '__main__':
     #It's recommended to generate MSA files from protein sequences that are limited to a maximum of 70 residues.
     #MSA files should be names as 1.a3m, 2.a3m, 3.a3m, ..., in numerical order
     createDatasetEmbedding('../a3m_files/', "../msa_feature.npy")
-

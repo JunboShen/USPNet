@@ -36,7 +36,9 @@ conda env create -f ./environment.yml
 
 [USPNet prediction head (without organism group information)](https://drive.google.com/file/d/1YfFmGZNEhl4q86dljPeWub1WLLCH7VNx/view?usp=drive_link).
 
-[USPNet-fast prediction head](https://drive.google.com/file/d/1eQMBVPvu3Nd7zEgLGinY09GUXbhn_LOy/view?usp=sharing).<br>
+[USPNet-fast prediction head](https://drive.google.com/file/d/1eQMBVPvu3Nd7zEgLGinY09GUXbhn_LOy/view?usp=sharing).
+
+[USPNet-fast prediction head (without organism group information)](https://drive.google.com/file/d/1wVzjoZC_v1-1SwhTwB06pqWoKYMx1yu8/view?usp=drive_link).<br>
 
 
 ## Usage
@@ -44,7 +46,9 @@ Put all the downloaded files into the same folder.<br>
 
 If you want to use USPNet on our benchmark set, please run:
 ```bash
-python data_processing.py
+# data processing, data_processed/ folder is created by default
+python data_processing.py 
+#Please put MSA embedding into the data_processed/ folder
 python predict.py
 
 # categorical benchmark data
@@ -54,7 +58,7 @@ python test.py
 
 Demo of USPNet on benchmark data without organism group information:
 ```bash
-python predict.py no_group_info
+python predict.py --group_info no_group_info
 
 python test.py no_group_info
 ```
@@ -66,22 +70,29 @@ python predict_fast.py
 python test_fast.py
 ```
 
+Demo of USPNet on benchmark data without organism group information:
+```bash
+python predict.py --group_info no_group_info
+
+python test_fast.py no_group_info
+```
+
 To generate MSA embeddings on your own protein sequences and use USPNet to perform signal peptide prediction, please run:
 ```bash
-# MSA embedding generation
-python data_processing.py [fasta_file] [msa_dir/]
+# MSA embedding generation. <data_directory_path>: Directory where the processed data will be saved. <msa_directory_path>: Directory for storing MSA files (.a3m).
+python data_processing.py --fasta_file <fasta_file_path> --data_processed_dir <data_directory_path> --msa_dir <msa_directory_path>
 
-# Prediction. use 'python predict.py no_group_info' if lack of organism group information.
-python predict.py
+# Prediction. use 'python predict.py --data_dir <data_directory_path> --group_info no_group_info' if lack of organism group information.
+python predict.py --data_dir <data_directory_path>
 ```
 
 If you want to use USPNet-fast to perform signal peptide prediction on your own protein sequences, please run:
 ```bash
+# Data processing. Processed data is saved in data_processed/ by default.
+python data_processing.py --fasta_file <fasta_file_path> --data_processed_dir <data_directory_path>
 
-# Prediction. use 'python predict_fast.py no_group_info' if lack of organism group information.
-python predict_fast.py
+# Prediction. use 'python predict_fast.py --data_dir <data_directory_path> --group_info no_group_info' if lack of organism group information.
+python predict_fast.py --data_dir <data_directory_path>
 
 ```
-
-
 

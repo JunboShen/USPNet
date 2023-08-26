@@ -69,10 +69,9 @@ def metric(mode, output, labels, cls=None):
             else:
                 acc = float(len([i for i in index_pred if i in index_true]))/float(len(index_true))
 
-            print("     test acc for " + cls + ": " + str(acc))
         else:
             acc = float(np.sum(np.equal(all_preds, np.array(labels))))/float(len(labels))
-            print("     test acc for all: " + str(acc))
+
         return acc
 
     elif mode=='F1_score':
@@ -90,7 +89,6 @@ def metric(mode, output, labels, cls=None):
         recall = TP/(TP+FN)
         F1_score = 2.0*precision*recall/(precision+recall)
 
-        print("     test F1 score for "+cls+": "+str(F1_score))
         return F1_score
 
     else :
@@ -111,7 +109,6 @@ def metric(mode, output, labels, cls=None):
 
         MCC = mcc(TP, TN, FP, FN)
 
-        print("     test MCC for " + cls + ": " + str(MCC))
         return MCC
 
 def metric_advanced(mode, y_pred, labels):
@@ -160,8 +157,6 @@ def metric_advanced(mode, y_pred, labels):
 
     elif (mode == "balanced_accuracy"):
         result = metrics.balanced_accuracy_score(y_test, y_pred)
-
-    print("test "+mode + " :" + str(result))
 
     return result
 
@@ -392,6 +387,3 @@ if __name__ == '__main__':
     position_specific_classes_enc.fit(
         np.array(PositionSpecificLetter.values()).reshape((len(PositionSpecificLetter.values()), 1))
     )
-
-    print(classes_sequence_from_ann_sequence("TTTTTTTTTTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", position_specific_classes_enc))
-    print(classes_sequence_from_ann_sequence("SSSSSSSSSSSSSSSSSSSSSSSOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", position_specific_classes_enc))

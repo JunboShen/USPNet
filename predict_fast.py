@@ -1,8 +1,22 @@
+import sys
+
+import  pandas as pd
 import os
 import torch as torch
 import numpy as np
+import argparse
 from utils_tools.utils import *
 import esm
+
+data_dir = 'data_processed'
+# Set up argument parser
+parser = argparse.ArgumentParser(description='Predict')
+parser.add_argument('--data_dir', nargs='?', default='data_processed', help='data directory')
+parser.add_argument('--group_info', nargs='?', default='default', help='group information provided or not')
+
+
+# Parse arguments
+args = parser.parse_args()
 
 dic = {'NO_SP': 0, 'SP': 1, 'LIPO': 2, 'TAT': 3, 'TATLIPO' : 4, 'PILIN' : 5}
 dic2 = {0: 'NO_SP', 1: 'SP', 2: 'LIPO', 3: 'TAT', 4: 'TATLIPO', 5: 'PILIN'}
@@ -31,7 +45,7 @@ def trans_data_esm(str_array):
 
     return result
 
-def trans_data_msa_in_batches(str_array, split=100, path="./test_data/embedding/test_feature_esm.npy"):
+def trans_data_esm_in_batches(str_array, split=100, path="./test_data/embedding/test_feature_esm.npy"):
     if(os.path.exists(path)):
         embedding_result = np.load(path)
         print("feature shape:")
@@ -98,12 +112,14 @@ def createTestData(data_path='./test_data/data_list.txt',
             str = line.strip('\n\t')[0:70]
             raw_data.append(("protein", str))
 
-    features = trans_data_msa_in_batches(raw_data, path=test_path)
+    features = trans_data_esm_in_batches(raw_data, path=test_path)
 
     with open(kingdom_path, 'r') as kingdom_file:
         for line in kingdom_file:
-            kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
-
+            if args.group_info == 'no_group_info':
+                kingdom_list.append([0, 0, 0, 0])
+            else:
+                kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
 
     data_file.close()
     kingdom_file.close()
@@ -126,37 +142,53 @@ def trans_output(str1):
 
 if __name__ == '__main__':
     device = torch.device("cuda:0")
+    # read file names if provided
+    if args.data_dir != 'data_processed':
+        data_dir = args.data_dir
 
-    model = torch.load("USPNet_fast.pth", map_location=device)
+    if args.group_info == 'no_group_info':
+        model = torch.load("../data/mdl/USPNet_fast_no_group_info.pth", map_location=device)
+    else:
+        model = torch.load("../data/mdl/USPNet_fast.pth", map_location=device)
 
-    model_ = model
     if isinstance(model, torch.nn.DataParallel):
         # access the model inside the DataParallel wrapper
         model = model.module
     model = model.to(device)
+    model.eval()
 
     filename_list = ["data_list.txt",
                      "kingdom_list.txt",
                      "test_feature_esm.npy",
-                     "results.txt",
-                     "aa_results.txt",
-                     "cleavage_results.txt"
                      ]
+
+    for i in range(len(filename_list)):
+        filename_list[i] = os.path.join(data_dir, filename_list[i])
 
     X_test = createTestData(data_path=filename_list[0],
                             kingdom_path=filename_list[1],
                             test_path=filename_list[2])
     output = []
     output_aa = []
+    aux_test = []
+
     X_test = torch.tensor(X_test)
     test_loader = torch.utils.data.DataLoader(X_test, batch_size=256)
     for i, input in enumerate(test_loader):
         input = input.cuda()
+        aux = input[:, 70:74]
+        aux = aux.cpu().detach().numpy()
+        aux_test.extend(aux)
         o1, o_aa = model(input)
         output.extend(o1.cpu().detach().numpy())
         output_aa.extend(o_aa.cpu().detach().numpy())
     output = torch.tensor(np.array(output))
     results = pred(output).cpu().detach().numpy()
+    # For Eurkaryota:
+    for i in range(len(aux_test)):
+        if (aux_test[i][0] == 1 and results[i] != 1 and results[i] != 0):
+            results[i] = 0
+
     output_aa = torch.argmax(torch.tensor(np.array(output_aa)), dim=2).reshape(-1, 1)
     results_aa = output_aa.cpu().detach().numpy()
     output_aa_ = results_aa.reshape(-1, 70).copy()
@@ -174,24 +206,15 @@ if __name__ == '__main__':
     output_aa_[indexes_0] = 0
     indexes_pos = np.where(output_aa_ == 1)
 
-    outf1 = open(filename_list[3], 'w')
+    predicted_type = []
     for result in results:
-        outf1.write(trans_output(result))
-        outf1.write('\n')
-    outf1.close()
+        predicted_type.append(trans_output(result))
 
-
-    outf2 = open(filename_list[4], 'w')
-    for result in output_aa_:
-        for aa in result:
-            outf2.write(str(aa))
-        outf2.write('\n')
-    outf2.close()
     indexes1= indexes_pos[0].copy().tolist()
     indexes2 = indexes_pos[1].copy().tolist()
 
 
-    outf3 = open(filename_list[5], 'w')
+    predicted_cleavage = []
     count = 0
     data_list = []
     with open(filename_list[0], 'r') as data_file:
@@ -200,17 +223,18 @@ if __name__ == '__main__':
     data_file.close()
     for result in results:
         if result==0:
-            outf3.write('\n')
+            predicted_cleavage.append('')
         else:
             try:
                 index = indexes1.index(count)
             except:
-                outf3.write(data_list[count])
+                predicted_cleavage.append(data_list[count])
             else:
                 index = indexes1.index(count)
                 index2 = indexes2[index]
                 sq=data_list[count]
-                outf3.write(sq[:index2+1])
-            outf3.write('\n')
+                predicted_cleavage.append(sq[:index2+1])
         count = count + 1
-    outf3.close()
+
+    df = pd.DataFrame({'sequence': data_list, 'predicted_type': predicted_type, 'predicted_cleavage': predicted_cleavage})
+    df.to_csv(data_dir + '/results.csv', index=False)

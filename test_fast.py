@@ -1,7 +1,16 @@
 import torch as torch
-from utils_tools.utils import *
 import numpy as np
+import argparse
 import esm
+from utils_tools.utils import *
+
+# Set up argument parser
+parser = argparse.ArgumentParser(description='Predict')
+parser.add_argument('group_info', nargs='?', default='default', help='group information provided or not')
+
+# Parse arguments
+args = parser.parse_args()
+
 cls_names=['LIPO', 'NO_SP', 'SP', 'TAT', 'TATLIPO', 'PILIN']
 metrics=['acc', 'F1_score', 'MCC']
 metric_ad_aa = ['recall', 'precision', 'F1_score']
@@ -116,7 +125,7 @@ def trans_label(str1):
     return a
 def createTestData(data_path='./test_data/data_list.txt', label_path="./test_data/target_list.txt",
                     kingdom_path='./test_data/kingdom_list.txt', aa_path = "./test_data/aa_list.txt",
-                   maxlen=70, test_path="./test_data/test_feature_esm.npy"
+                   maxlen=70, test_path="./test_data/embedding/test_feature_esm.npy"
                    ):
     # Initialize
     data_list = []
@@ -142,7 +151,10 @@ def createTestData(data_path='./test_data/data_list.txt', label_path="./test_dat
 
     with open(kingdom_path, 'r') as kingdom_file:
         for line in kingdom_file:
-            kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
+            if args.group_info == 'no_group_info':
+                kingdom_list.append([0, 0, 0, 0])
+            else:
+                kingdom_list.append(np.eye(len(kingdom_dic.keys()))[kingdom_dic[line.strip('\n\t')]])
 
     count = 0
     with open(aa_path, 'r') as aa_file:
@@ -183,9 +195,9 @@ def evaluate(X, label, mode):
         target_aa = target_aa.cuda()
         o1, o_aa= model(input)
         if mode == "best path":
-            o_aa = np.array(model_.module.crf.decode(o_aa.permute(1, 0, 2)))
+            o_aa = np.array(model.crf.decode(o_aa.permute(1, 0, 2)))
         else:
-            o_aa = model_.module.crf.decode_based_on_prob(o_aa.permute(1, 0, 2), reduce=True)
+            o_aa = model.crf.decode_based_on_prob(o_aa.permute(1, 0, 2), reduce=True)
 
         output.extend(o1.cpu().detach().numpy())
         output_aa.extend(o_aa)
@@ -265,9 +277,13 @@ if __name__ == '__main__':
     # crf has two ways to predict: prob/best path
     device = torch.device("cuda:0")
     mode = "best path"
-    model = torch.load("USPNet_fast.pth", map_location=device)
-    print()
-    model_ = model
+
+    if args.group_info == 'no_group_info':
+        model = torch.load("../data/mdl/USPNet_fast_no_group_info.pth", map_location=device)
+    else:
+        model = torch.load("../data/mdl/USPNet_fast.pth", map_location=device)
+
+
     if isinstance(model, torch.nn.DataParallel):
         # access the model inside the DataParallel wrapper
         model = model.module
@@ -310,7 +326,7 @@ if __name__ == '__main__':
     y_pred, output_aa, labels_test, labels_test_aa = evaluate(X_test, labels_test, mode)
     m = 'MCC'
 
-    #result_ad = metric_advanced(m, y_pred, labels_test)
+    result_ad = metric_advanced(m, y_pred, labels_test)
 
     for key in X_test_cls.keys():
         m = "MCC"
@@ -346,7 +362,6 @@ if __name__ == '__main__':
         result_ad = metric_advanced(m, y_pred_, labels_test_)
         y_pred_, labels_test_ = relabel(y_pred.clone(), labels_test, 4, "all")
         result_ad = metric_advanced(m, y_pred_, labels_test_)
-
 
         #aaTest(output_aa, labels_test_aa, labels_test, "SP")
         #if (key != 'EUKARYA'):

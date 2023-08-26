@@ -150,9 +150,9 @@ def evaluate(X, label, mode):
         target_aa = target_aa.cuda()
         o1, o_aa= model(input)
         if mode == "best path":
-            o_aa = np.array(model_.module.crf.decode(o_aa.permute(1, 0, 2)))
+            o_aa = np.array(model.crf.decode(o_aa.permute(1, 0, 2)))
         else:
-            o_aa = model_.module.crf.decode_based_on_prob(o_aa.permute(1, 0, 2), reduce=True)
+            o_aa = model.crf.decode_based_on_prob(o_aa.permute(1, 0, 2), reduce=True)
 
         output.extend(o1.cpu().detach().numpy())
         output_aa.extend(o_aa)
@@ -234,11 +234,11 @@ if __name__ == '__main__':
     mode = "best path"
 
     if args.group_info == 'no_group_info':
-        model = torch.load("USPNet_no_group_info.pth", map_location=device)
+        model = torch.load("../data/mdl/USPNet_no_group_info.pth", map_location=device)
     else:
-        model = torch.load("USPNet_model.pth", map_location=device)
+        model = torch.load("../data/mdl/USPNet_model.pth", map_location=device)
 
-    model_ = model
+
     if isinstance(model, torch.nn.DataParallel):
         # access the model inside the DataParallel wrapper
         model = model.module
@@ -282,7 +282,7 @@ if __name__ == '__main__':
                         'NEGATIVE': "./test_data/embedding/feature_NEGATIVE.npy"}
     y_pred, output_aa, labels_test, labels_test_aa = evaluate(X_test, labels_test, mode)
 
-    #result_ad = metric_advanced("MCC", y_pred, labels_test)
+    result_ad = metric_advanced("MCC", y_pred, labels_test)
 
     for key in X_test_cls.keys():
         m = "MCC"

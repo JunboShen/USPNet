@@ -31,6 +31,8 @@ conda env create -f ./environment.yml
 ### Download embeddings for the benchmark set
 [MSA embedding for test set](https://drive.google.com/file/d/1FPPKO9OaAdB0K9heUqQuymmqMN4m_XI3/view?usp=sharing).<br>
 
+### All the data mentioned above can also be obtained from our [OSF project](https://osf.io/nh3cf/).<br>
+
 ### Download trained predictive models
 [USPNet prediction head](https://drive.google.com/file/d/1ZNDZ_ulmeZzol7u1_fMEODe7nvtWLFqh/view?usp=sharing)
 

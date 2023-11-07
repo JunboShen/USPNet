@@ -22,7 +22,10 @@ position_specific_classes_enc.fit(
     np.array(PositionSpecificLetter.values()).reshape((len(PositionSpecificLetter.values()), 1))
 )
 
-esm_model, alphabet = esm.pretrained.esm1b_t33_650M_UR50S()
+#Load ESM1b model
+#esm_model, alphabet = esm.pretrained.esm1b_t33_650M_UR50S()
+#Load ESM2 model
+esm_model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
 esm_model = (esm_model).cuda("cuda:0")
 batch_converter = alphabet.get_batch_converter()
 

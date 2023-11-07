@@ -38,14 +38,14 @@ conda env create -f ./environment.yml
 
 [USPNet prediction head (without organism group information)](https://drive.google.com/file/d/1YfFmGZNEhl4q86dljPeWub1WLLCH7VNx/view?usp=drive_link).
 
-[USPNet-fast prediction head](https://drive.google.com/file/d/1eQMBVPvu3Nd7zEgLGinY09GUXbhn_LOy/view?usp=sharing).
+[USPNet-fast prediction head](https://drive.google.com/file/d/1eQMBVPvu3Nd7zEgLGinY09GUXbhn_LOy/view?usp=drive_link).
 
 [USPNet-fast prediction head (without organism group information)](https://drive.google.com/file/d/1wVzjoZC_v1-1SwhTwB06pqWoKYMx1yu8/view?usp=drive_link).<br>
 
 ### Trained predictive model targeting the major class (Sec/SPI)
 Specialized trained model optimized with higher accuracy on the major class (Sec/SPI). The model emphasizes the major class through an increased weight on the major class (Sec/SPI) in the objective function.
 
-[USPNet-fast prediction head (focus on Sec/SPI)](https://drive.google.com/file/d/1uwT9fL8TWwh8kXVs1IwdBTtMLALB9EJ7/view?usp=sharing).<br>
+[USPNet-fast prediction head (focus on Sec/SPI, require group information)](https://drive.google.com/file/d/1uwT9fL8TWwh8kXVs1IwdBTtMLALB9EJ7/view?usp=drive_link).<br>
 
 ## Usage
 Put all the downloaded files into the same folder.<br>
